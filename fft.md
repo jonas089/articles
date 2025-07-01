@@ -1,5 +1,7 @@
 # The Fast Fourier Transform and Number Theoretic Transform for efficient Polynomial evaluations
-The Fast Fourier Transform is an efficient algorithm to compute the [Discrete Fourier Transform (DFT)](https://en.wikipedia.org/wiki/Discrete_Fourier_transform). It can be used to convert a polynomial from its coefficient representation to its value representation, by evaluating the polynomial at complex points. The reason why the implementation of the FFT algorithm is possible is because we perform a frequency analysis of our inputs for a very specific domain called the `roots of unity`. 
+The Fast Fourier Transform is an efficient algorithm to compute the [Discrete Fourier Transform (DFT)](https://en.wikipedia.org/wiki/Discrete_Fourier_transform). 
+
+It can be used to convert a polynomial from its coefficient representation to its value representation, by evaluating the polynomial at complex points. The reason why the implementation of the FFT algorithm is possible is because we perform a frequency analysis of our inputs for a very specific domain called the `roots of unity`. 
 
 The crucial property of this domain that makes FFT possible is:
 
@@ -35,7 +37,13 @@ We see immediately that 2π represents a full rotation of 360 degrees. Our roots
 
 But what is the complex number `i`? As a computer scientist this concept is difficult to understand, but `i` is no more than a notation trick used by mathematicians to represent our result for ω as a 2D point with a sin and cos component. In a computer environment we will separate these components and compute the sin and cos parts separately. Once done we can collect our results into a complex number structure (real, imaginary). 
 
-As an engineer I am not too fond of the idea of complex numbers, because in a computer representation they are nothing but 2D vectors or tuples. The reason this is important is because we want to represent a full rotation around the unit circle, where each step evenly advances the angle.
+As an engineer I am not too fond of the idea of complex numbers, because in a computer representation they are nothing but 2D vectors or tuples. The reason this is important is because we want to represent a full rotation around the unit circle, where each step evenly advances the angle. 
+
+>[!NOTE]
+> This statement about i is not 100% true, because while addition works
+> the same for complex numbers the arithmetic is different for complex numbers.
+> However it is possible to represent the complex number as a 2D vector and 
+> apply the correct arithmetic to each of the 2 parts.
 
 **Illustration of a case where n=8**:
 
