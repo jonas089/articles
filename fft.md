@@ -41,7 +41,8 @@ As an engineer I am not too fond of the idea of complex numbers, because in a co
 
 >[!NOTE]
 > This statement about i is not 100% true, because while addition works
-> the same for complex numbers the arithmetic is different for complex numbers.
+> the same for complex numbers not arithmetic is the same for complex numbers.
+> Multiplication for example works slightly differently.
 > However it is possible to represent the complex number as a 2D vector and 
 > apply the correct arithmetic to each of the 2 parts.
 
