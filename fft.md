@@ -107,7 +107,7 @@ We can think of our result X[k] as a share in a pool of accumulated values and w
 ## Context in STARK proving systems
 Now that we have a decent understanding of FFT / NTT and hopefully also know what we don't yet fully understand and have the ability to dive deeper on demand, let's explore the real-world application of NTT that was my motivation to even write this article and dive deep into the math and underlying algorithms.
 
-NTT is used in STARK proving systems that rely on polynomial commitment schemes by interpolating (using INTT) and folding polynomials. Now what does it mean to interpolate a polynomial? It simply means to use an algorithm like INTT to convert from the value representation (points on the polynomial) to the coefficient representation (2x^2 + 3x + 1, o.e.). 
+NTT is used in STARK proving systems that rely on polynomial commitment schemes by interpolating (using INTT) and folding polynomials. Now what does it mean to interpolate a polynomial? It simply means to use an algorithm like INTT to convert from the value representation (points on the polynomial) to the coefficient representation (`2x^2 + 3x + 1`, o.e.). 
 
 Folding with NTT is a bit more complicated than interpolation, but it is one of the most important optimizations used in production-grade, multi-million-dollar proof systems. We won't dive deep into the folding scheme used specifically in those proof systems, but they always rely on the division of polynomials. And division of polynomials is something that can be efficiently done by first performing NTT on each polynomial's inputs, then dividing one polynomial by the other and finally interpolating our result with INTT.
 
