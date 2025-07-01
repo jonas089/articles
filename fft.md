@@ -17,7 +17,7 @@ This article strives to strike a balance between theory and implementation, maki
 
 ## Roots of Unity
 ### Complex Roots of Unity
-In order to apply FFT to the input vector that contains a signal that we want to analyze using FFT, we must pad our input to a power of 2:
+In order to apply FFT to the input vector that contains a signal that we want to analyze using FFT, we should pad our input to a power of 2:
 
 ```
 [3,2,1,0] # some example input, could be measurement results (signal amplitude over time)
@@ -100,7 +100,7 @@ domain of roots of unity.
 When we apply NTT to 2 distinct polynomials, we can use their newly found value representation
 to perform arithmetic such as addition, multiplication and inverse multiplication (=division) to find solutions for real problems.
 
-Once we have applied our arithmetic, we perform INTT / IFFT (the inverse NTT algorithm), which is exactly the same as the regular NTT / FFT except that we raise each of our roots of unity by -1 and normalize the result. In order to normalize the result we have to divide by n. 
+Once we have applied our arithmetic, we perform INTT / IFFT (the inverse NTT algorithm), which is exactly the same as the regular NTT / FFT except that we take the inverse of each of our roots of unity  ω^-1 and normalize the result. In order to normalize the result we have to divide by n. 
 
 We can think of our result X[k] as a share in a pool of accumulated values and when performing IFFT or INTT we redeem our contributions from that pool for each frequency `k`. While we generally avoid abstraction this analogy can help you further explore the idea of chunking frequencies in FFT / NTT.
 
