@@ -1,11 +1,14 @@
 # The Fast Fourier Transform and Number Theoretic Transform for efficient Polynomial evaluations
-The Fast Fourier Transform is an efficient algorithm to compute the [Discrete Fourier Transform (DFT)](https://en.wikipedia.org/wiki/Discrete_Fourier_transform). It can be used to convert a polynomial from its coefficient representation to its value representation, by evaluating the polynomial at complex points. The reason why the FFT algorithm is so fast is because we perform a frequency analysis of our inputs for a very specific domain called the `roots of unity`. 
+The Fast Fourier Transform is an efficient algorithm to compute the [Discrete Fourier Transform (DFT)](https://en.wikipedia.org/wiki/Discrete_Fourier_transform). It can be used to convert a polynomial from its coefficient representation to its value representation, by evaluating the polynomial at complex points. The reason why the implementation of the FFT algorithm is possible is because we perform a frequency analysis of our inputs for a very specific domain called the `roots of unity`. 
 
-The crucial property of this domain that makes FFT fast is:
+The crucial property of this domain that makes FFT possible is:
+
 ```
 ω n ^2k = w n/2 ^ k
 ```
-Which allows us to write a recursive algorithm that reduces our problem by repeatedly halving our input domain.
+
+Which allows us to write a recursive algorithm that reduces our problem by repeatedly halving our input domain, by splitting it into even and odd pairs.
+
 Feel free to revisit this equality after reading the entire article, by then you should have a good understanding of what `roots of unity` are 
 and how we use them depending on our context / input data.
 
