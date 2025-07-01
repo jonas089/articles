@@ -36,7 +36,8 @@ As an engineer I am not too fond of the idea of complex numbers, because in a co
 
 **Illustration of a case where n=8**:
 
-![Unit Circle with k](resources/fft/unit-circle.png)
+<img src="resources/fft/unit-circle.png" width="250" height="250" alt="Unit Circle with k" />
+
 
 ### Roots of Unity in a Finite Field
 When operating over a finite field instead of the complex number plane,
