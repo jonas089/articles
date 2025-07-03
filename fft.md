@@ -33,7 +33,7 @@ we must compute our roots of unity for the input domain of size n:
 ```
 ω^k = e^(-2πik / N) = cos(2πk/N) - i sin(2πk/N)
 ```
-We see immediately that 2π represents a full rotation of 360 degrees. Our roots of unity are spaced points on the unit circle from 0 to 360, representing a full revolution and allowing us to analyze the input signal based on the resolution defined by the size of our inputs.
+We see immediately that 2π represents a full rotation of 360°. Our roots of unity are spaced points on the unit circle from 0 to 360, representing a full revolution and allowing us to analyze the input signal based on the resolution defined by the size of our inputs.
 
 But what is the complex number `i`? As a computer scientist this concept is difficult to understand, but `i` is no more than a notation trick used by mathematicians to represent our result for ω as a 2D point with a sin and cos component. In a computer environment we will separate these components and compute the sin and cos parts separately. Once done we can collect our results into a complex number structure (real, imaginary). 
 
@@ -41,7 +41,7 @@ As an engineer I am not too fond of the idea of complex numbers, because in a co
 
 >[!NOTE]
 > This statement about i is not 100% true, because while addition works
-> the same for complex numbers not arithmetic is the same for complex numbers.
+> the same for complex numbers not all arithmetic is the same for complex numbers.
 > Multiplication for example works slightly differently.
 > However it is possible to represent the complex number as a 2D vector and 
 > apply the correct arithmetic to each of the 2 parts.
@@ -116,6 +116,99 @@ to perform arithmetic such as addition, multiplication and inverse multiplicatio
 Once we have applied our arithmetic, we perform INTT / IFFT (the inverse NTT algorithm), which is exactly the same as the regular NTT / FFT except that we take the inverse of each of our roots of unity  ω^-1 and normalize the result. In order to normalize the result we have to divide by n. 
 
 We can think of our result X[k] as a share in a pool of accumulated values and when performing IFFT or INTT we redeem our contributions from that pool for each frequency `k`. While we generally avoid abstraction this analogy can help you further explore the idea of chunking frequencies in FFT / NTT.
+
+## Iterative FFT implementation
+Finally, in order to be able to apply FFT / NTT in a computer science context, we must take a look at the implementation of the algorithm. We can choose between a recursive and iterative implementation, but this article will cover only the iterative implementation. The reason for this is that recursive algorithms are not GPU-friendly and in order to gain the maximum performance from our FFT we will likely want to parallelize it. 
+
+Here is a Rust implementation of FFT, with a boolean flag indicating if we are applying FFT or the inverse FFT (IFFT):
+
+```rust
+pub fn fft_iterative(mut values: Vec<Complex>, invert: bool) -> Vec<Complex> {
+    let n = values.len();
+    assert!(n.is_power_of_two());
+
+    // Bit reversal permutation to account for the traversal
+    // order in recursive FFT
+    // This property emerges naturally
+    let mut j = 0;
+    for i in 1..n {
+        let mut bit = n >> 1;
+        while j & bit != 0 {
+            j ^= bit;
+            bit >>= 1;
+        }
+        j ^= bit;
+
+        if i < j {
+            values.swap(i, j);
+        }
+    }
+
+    let pi = std::f64::consts::PI;
+    let sign = if invert { 1.0 } else { -1.0 };
+
+    // FFT Butterfly loop
+    let mut len = 2;
+    while len <= n {
+        let angle = 2.0 * pi / (len as f64) * sign;
+        let wlen = Complex {
+            real: f64::cos(angle),
+            imaginary: f64::sin(angle),
+        };
+
+        for i in (0..n).step_by(len) {
+            let mut w = Complex {
+                real: 1.0,
+                imaginary: 0.0,
+            };
+            for j in 0..len / 2 {
+                // even index part
+                let u = values[i + j];
+                // odd index part
+                let v = w * values[i + j + len / 2];
+                // keep rotation as-is
+                values[i + j] = u + v;
+                // 180° flip
+                values[i + j + len / 2] = u - v;
+                w = w * wlen;
+            }
+        }
+
+        len *= 2;
+    }
+
+    if invert {
+        for x in values.iter_mut() {
+            *x = x.scale(1.0 / n as f64);
+        }
+    }
+
+    values
+}
+```
+
+The twiddle factor `w = e^{-2πik/n}` is our complex rotation factor on the unit circle, ranging from 0 to a full rotation of 360°.
+`v` is the result of our current odd-index value multiplied by `w`. Only the odd parts need to be rotated, the even parts
+go straight into the sum, since they are already aligned on the unit circle.
+
+Now let's consider this equality for even and odd indices:
+`e^(-2πik(2j + 1)/n) = e^(-2πik(2j)/n) * e^(-2πik/n)`
+
+The performance advantage of FFT comes from our ability to re-use evaluations from previous DFTs at given pairs of even/odd indices.
+In particular, the part that is re-usable is `e^(-2πik(2j)/n)` and all previous evaluations.
+
+The 180° (`-1`) phase flip is **not** pairing an even input with its odd input,
+it is applied only to the odd-path contribution so the butterfly can generate the second frequency bin `k + n/2`.  
+In other words, one rotated odd term feeds two outputs: `u + v` for bin `k`, and `u - v` for the bin that sits exactly π radians (180°) 
+farther around the unit circle.
+
+The `-1` comes from our spacing by `n/2`:
+
+```
+W_n^(k + n/2) = W_n^k * W_n^(n/2)
+W_n^(n/2) = e^(-2πi·(n/2)/n) = e^(-πi) = -1
+```
+
 
 ## Context in STARK proving systems
 Now that we have a decent understanding of FFT / NTT and hopefully also know what we don't yet fully understand and have the ability to dive deeper on demand, let's explore the real-world application of NTT that was my motivation to even write this article and dive deep into the math and underlying algorithms.
