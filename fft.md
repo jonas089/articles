@@ -209,6 +209,9 @@ W_n^(k + n/2) = W_n^k * W_n^(n/2)
 W_n^(n/2) = e^(-2πi·(n/2)/n) = e^(-πi) = -1
 ```
 
+Now you should see that even indices always correspond to the first half in our bit-adjusted list and odd indices correspond to the second half.
+We always pair one element from the first half with one element from the second half in the recursive process that re-uses the values from
+the previous step all the way up to our result.
 
 ## Context in STARK proving systems
 Now that we have a decent understanding of FFT / NTT and hopefully also know what we don't yet fully understand and have the ability to dive deeper on demand, let's explore the real-world application of NTT that was my motivation to even write this article and dive deep into the math and underlying algorithms.
