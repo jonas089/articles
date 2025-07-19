@@ -3,12 +3,6 @@ The Fast Fourier Transform is an efficient algorithm to compute the [Discrete Fo
 
 It can be used to convert a polynomial from its coefficient representation to its value representation, by evaluating the polynomial at complex points. The reason why the implementation of the FFT algorithm is possible is because we perform a frequency analysis of our inputs for a very specific domain called the `roots of unity`. 
 
-The crucial property of this domain that makes FFT possible is:
-
-```
-ω n ^2k = w n/2 ^ k
-```
-
 Which allows us to write a recursive algorithm that reduces our problem by repeatedly halving our input domain, by splitting it into even and odd pairs.
 
 Feel free to revisit this equality after reading the entire article, by then you should have a good understanding of what `roots of unity` are 
