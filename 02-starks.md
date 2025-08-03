@@ -1,8 +1,8 @@
 # STARKs, DEEP and FRI
-This document descibes some essential aspects of zk-STARKs, with a strong focus on DEEP and FRI. Fiat-shamir, blinding and some details are not covered. This document is based off my understanding and there can be mistakes in it.
+This document describes some essential aspects of zk-STARK constructions, with a strong focus on DEEP and FRI. Fiat-Shamir, blinding and some details are not covered. This document is based on my understanding and there may be mistakes in it.
 
 ## Trace Polynomials
-Interpolate trace polynomial(s) Ti(x) over the original domain. The original domain are the roots of unity for the trace column size.
+A computation trace is the state of each variable used in that computation at each step. We can represent a trace as a table with rows and columns, where each row represents a point in time and each column represents a variable. In STARK constructions, we interpolate each column / each variable as a polynomial, where the domain is a set of `n` roots of unity.
 
 Example trace:
 
@@ -14,7 +14,8 @@ Example trace:
 | ...   |     |
 | w_n   | ... |
 
-Where `w` are roots of unity for the domain size and field. When using `arkworks`, these can be obtained from:
+Where `w_n` are roots of unity for the domain size and finite field. 
+When using `arkworks`, these can be obtained from:
 
 ```rust
 let domain = GeneralEvaluationDomain::<Fr>::new(trace_len).unwrap();
@@ -25,14 +26,14 @@ Later we will want to evaluate over a shifted, extended domain (for simplicity w
 ```rust
         let extended_domain = GeneralEvaluationDomain::<Fr>::new(trace_len * 8).unwrap();
 ```
-gives us an extended domain that overlaps with the original domain.
+gives us an extended domain that overlaps with our original domain. The shifted extended domain would have no overlap with our original domain, which prevents us from accidentally leaking trace values or dividing by zero when sampling.
 
 ## Constraint Polynomials
 Constraint functions are written in such a way that they represent polynomials.
 
 `ci(x) = T(gx) - T(x)^2`
 
-encodes a constraint where the next row for a column must be the square of the previous, as seen in the trace table above.
+encodes a constraint where the next row for a column must be the square of the previous row, as seen in the trace table above.
 
 the constraints are satisfied for this colum that represents the computation trace of the x variable.
 
@@ -45,7 +46,7 @@ Note that in production systems we add random coefficients for extra security.
 ## LDE - Low degree extension
 We use low degree extension (LDE) to evaluate our constraints at `Ti(x), x∈H'`, where H' is a shifted, extended domain that intersects our original domain / roots of unity H.
 
-Remember that our constraints evaluate to 0 over the original domain, because they are satisfied for the computation trace. This is not the case for evaluations `C(T(x), T(gx), ...)` over the extended domain `x∈H`'.
+Remember that our constraints evaluate to 0 over the original domain, because they are satisfied for the computation trace. This is not the case for evaluations `C(T(x), T(gx), ...)` over the extended domain `x∈H'`.
 
 ## Quotient
 The quotient polynomial Q(x) is computed by dividing the composite constraint polynomial C(x) by the vanishing polynomial for the original domain (roots of unity). => `C(x) / Z(x) = Q(x)`. Note that this will only yield a low-degree Q(x) if the trace satisfies the constraints over the original domain, since C(x) was interpolated over the extended domain that includes the original domin.
@@ -53,7 +54,7 @@ The quotient polynomial Q(x) is computed by dividing the composite constraint po
 Spot checks are however only performed in and outside of the extended domain `x∈H', x∌H, z∌H, z∌H'`. If we tried to spot-check inside the original domain `H`, then we would leak trace values which is not zero-knowledge.
 
 ## DEEP
-In STARKs we want to prove that we know a trace that satisfies our constraints over the original domain without revealing any of the original trace values.
+In STARK constructions we want to prove that we know a trace that satisfies our constraints over the original domain without revealing any of the original trace values.
 
 To achieve this, we have to construct a DEEP polynomial from the trace and constraints.
 
@@ -72,7 +73,7 @@ Note that if we tried to interpolate C(x) over the original domain as a polynomi
 In typical constructions x is an element from the shifted, extended domain H' that is used when computing points of the DEEP polynomial D(x).
 
 ## Spot Checks 
-In addition to checking that the DEEP polynomial is low-degree, we must also perform spot checks in the extended domain. This is usually all based on Fiat-shamir challenges, but the underlying logic of the checks remains the same:
+In addition to checking that the DEEP polynomial is low-degree, we must also perform spot checks in the extended domain. This is usually all based on Fiat-Shamir challenges, but the underlying logic of the checks remains the same:
 
 ```rust
 if composite_poly.evaluate(x) != quotient_poly.evaluate(x) * vanishing_poly.evaluate(x) {
@@ -94,9 +95,9 @@ Where `g` is the generator of the original domain and `fibonacci_constriant` is 
 The spot checks ensure consistency with the constraint logic and correctness of the quotient polynomial. Note that in most STARK constructions neither of these polynomials need to be interpolated, I just chose to interpolate them for simplicity during my research.
 
 ## FRI
-FRI folding is an essential path of the STARK construction and works by halving the evaluation domain and decreasing the polynomial degree in each step. In each step the degree drops approximately by half.
+FRI folding is an essential part of STARK constructions. At each step, it halves the evaluation domain and roughly halves the polynomial’s degree.
 
 We use FRI to verify that the degree of D(x) is <= d, where d is the degree bound for our constraints and trace size. If this check succeeds for all our random challenges (x, z) and if the prover can provide valid merkle proofs for the evaluations of T(x) and the results of the FRI folding steps for the extended domain (we re-use x for these spot checks, so ideally we choose `x∈H'`), then we know with high certainty that the prover knows a trace that makes the constraint polynomial vanish over the original domain. This is equivalent to knowing a valid solution to our computational problem / having executed the program.
 
 ## Toyni STARK
-I am working on a toy implementation of STARKs [here](https://github.com/jonas089/toyni). This article is closely aligned with the code that I am writing in that repository, so please open an issue if you discover an inaccuracy or mistake in my current understanding of DEEP / FRI.
+I am working on a toy implementation of STARK constructions [here](https://github.com/jonas089/toyni). This article is closely aligned with the code that I am writing in that repository, so please open an issue if you discover an inaccuracy or mistake in my current understanding of DEEP / FRI.
