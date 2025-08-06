@@ -130,6 +130,12 @@ Assuming only one column (one trace polynomial T(x)) for the fibonacci example.
 2. Check that `D(x) = alpha * (Q(x) - Q(z)) / (x - z)` for a few spot checks `x∈S`.
 3. Check that `D(x)` is a low degree polynomial by spot-checking each folding layer at the same spot checks `x∈S`.
 
+The verifier only opens the merkle tree for the respective evaluations at the query points. The prover does not disclose an interpolated Q(x) or C(x) - actually interpolation is not required at all, 
+except when building T(x) over the original domain.
+
+It is difficult for a prover to forge points Q(z), C(z) that satisfy C(z) / Z(z) = Q(z), where Q(z) remains consistent with the DEEP formula for query points Q(x), `x∈S`.
+This DEEP consistency check is essential to the security of our STARK.
+
 
 ## Toyni STARK
 I am working on a toy implementation of STARK constructions [here](https://github.com/jonas089/toyni). This article is closely aligned with the code that I am writing in that repository, so please open an issue if you discover an inaccuracy or mistake in my current understanding of DEEP / FRI. Toyni is an active work in progress and will undergo major changes to closely align with this article.
