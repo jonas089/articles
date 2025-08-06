@@ -52,7 +52,7 @@ We construct a composite constraint polynomial C(x) that is never interpolated. 
 Note that in production systems we add random coefficients for extra security.
 
 ## LDE - Low degree extension
-We use low degree extension (LDE) to evaluate our constraints at `Ti(x), x∈H'`, where H' is a shifted, extended domain that intersects our original domain / roots of unity H.
+We use low degree extension (LDE) to evaluate our constraints at `T(x), x∈H'`, where H' is a shifted, extended domain that intersects our original domain / roots of unity H.
 
 Remember that our constraints evaluate to 0 over the original domain, because they are satisfied for the computation trace. This is not the case for evaluations `C(T(x), T(gx), ...)` over the extended domain `x∈H'`.
 
@@ -68,17 +68,19 @@ To achieve this, we have to construct a DEEP polynomial from the trace and const
 
 `D(x) = ((Q(x) - Q(z)) / x - z)`
 
-Where Z(x) is the vanishing polynomial of the original domain, r(x) is a random low-degree polynomial and x, z are random challenges issued by the verifier (using Fiat-Shamir in non-interactive protocols).
+Where `Z(x)` is the vanishing polynomial of the original domain and `Q(x)` is the quotient polynomial from `C(x) / Z(x)`. Note that in a real-world scenario we would add trace evaluations:
 
-We use FRI to check, in a point-wise algorithm, that the polynomial Q(x), of degree d, when divided by a degree-1 polynomial (x - z), yields a low-degree polynomial that is within our degree bound, which depends on the trace and constraints.
+
+`D(x) = alpha_i * ((Q(x) - Q(z)) / x - z) + alpha_j * ((T(x) - T(z) / x - z)`
+
+We use FRI to check, in a point-wise manner, that the polynomial `Q(x)`, of degree `d`, when divided by a degree-1 polynomial (x - z), yields a low-degree polynomial that is within our degree bound, which depends on the trace size and the degree of our constraints.
 
 Next we commit the folding steps in the prover to a merkle tree and for each spot check / random challenge (x, z) the verifier must check the commitments against the merkle root that is part of the proof output.
 
-You may ask yourself why we don't just check that C(x) is low degree and the reason for this is that a malicious prover could cheat by making C(x) the zero polynomial. DEEP helps us verify consistency between D(x) and the committed trace values.
+> [!NOTE]
+> If we tried to interpolate C(x) over the original domain as a polynomial, then we would get the zero polynomial for a valid trace. That makes it impossible to reason about the trace through LDE. 
+> Remember not to interpolate C(x) from evaluations over just the original domain if all constraints are always satisfied!
 
-Note that if we tried to interpolate C(x) over the original domain as a polynomial, then we would get the zero polynomial for a valid trace. That makes it impossible to reason about the trace through LDE. Remember to never interpolate C(x) from evaluations over just the original domain if all constraints are always satisfied!
-
-In typical constructions x is an element from the shifted, extended domain H' that is used when computing points of the DEEP polynomial D(x).
 
 ## Spot Checks 
 In addition to checking that the DEEP polynomial is low-degree, we must also perform spot checks in the extended domain. This is usually all based on Fiat-Shamir challenges, but the underlying logic of the checks remains the same:
