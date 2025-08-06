@@ -1,6 +1,11 @@
 # STARKs, DEEP and FRI
 This document describes some essential aspects of zk-STARK constructions, with a strong focus on DEEP and FRI. Fiat-Shamir, blinding and some details are not covered in as much depth. This document is based on my understanding and there may be mistakes in it. 
 
+>[!WARNING]
+> There are mistakes in this article.
+> It's being actively worked on and this warning will
+> be removed once the description of STARKs is sound.
+
 We will be working with just a single column / variable and therefore just a single trace polynomial `T(x)` and just one transition constraint `C(x)` (no boundary constraints).
 
 ## Trace Polynomials
