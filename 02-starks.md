@@ -111,7 +111,9 @@ The spot checks ensure consistency with the constraint logic and correctness of 
 ## FRI
 FRI folding is an essential part of STARK constructions. At each step, it halves the evaluation domain and roughly halves the polynomial’s degree.
 
-We use FRI to verify that the degree of D(x) is <= d, where d is the degree bound for our constraints and trace size. If this check succeeds for all our random challenges (x, z) and if the prover can provide valid merkle proofs for the evaluations of T(x) and the results of the FRI folding steps for the extended domain (we re-use x for these spot checks, so ideally we choose `x∈H'`), then we know with high certainty that the prover knows a trace that makes the constraint polynomial vanish over the original domain. This is equivalent to knowing a valid solution to our computational problem / having executed the program.
+We use FRI to verify that the degree of D(x) is <= d, where d is the degree bound for our constraints and trace size. If this check succeeds for all our random challenges (x, z) and if the prover can provide valid merkle proofs for the evaluations of T(x) and the results of the FRI folding steps for the extended domain (we re-use x for these spot checks, so ideally we choose `x∈H'`), 
+
+then we know with high certainty that the prover knows a trace that makes the constraint polynomial vanish over the original domain. This is equivalent to knowing a valid solution to our computational problem / having executed the program.
 
 ## Final implementation plan
 Assuming only one column (one trace polynomial T(x)) for the fibonacci example.
