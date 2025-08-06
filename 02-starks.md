@@ -86,11 +86,11 @@ Next we commit the folding steps in the prover to a merkle tree and for each spo
 In addition to checking that the DEEP polynomial is low-degree, we must also perform spot checks in the extended domain. This is usually all based on Fiat-Shamir challenges, but the underlying logic of the checks remains the same:
 
 ```rust
-if composite_poly.evaluate(x) != quotient_poly.evaluate(x) * vanishing_poly.evaluate(x) {
+if constraint_poly.evaluate(z) != quotient_poly.evaluate(z) * vanishing_poly.evaluate(z) {
     panic!("Spot check failed!");
 }
 
-if composite_poly.evaluate(x)
+if constraint_poly.evaluate(x)
     != fibonacci_constraint(
         trace_poly.evaluate(g * g * x),
         trace_poly.evaluate(g * x),
@@ -99,7 +99,10 @@ if composite_poly.evaluate(x)
 {
     panic!("Spot check failed!");
 }
+
+// x∈H'∌H, z∌H'∌S
 ```
+
 Where `g` is the generator of the original domain and `fibonacci_constriant` is an example of a raw constraint function that was used earlier when evaluating C(x) over trace polynomial evaluations.
 
 The spot checks ensure consistency with the constraint logic and correctness of the quotient polynomial. Note that in most STARK constructions neither of these polynomials need to be interpolated, I just chose to interpolate them for simplicity during my research.
