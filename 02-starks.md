@@ -53,9 +53,9 @@ Note that in our examples we don't need a composite constraint polynomial, since
 Note that in production systems we add random coefficients for extra security.
 
 ## LDE - Low degree extension
-We use low degree extension (LDE) to evaluate our constraints at `T(x), x∈H'`, where H' is a shifted, extended domain that intersects our original domain / roots of unity H.
+We use low degree extension (LDE) to evaluate our constraints at `T(x), x∈H'`, where H' is the extended domain that intersects our original domain / roots of unity H.
 
-Remember that our constraints evaluate to 0 over the original domain, because they are satisfied for the computation trace. This is not the case for evaluations `C(T(x), T(gx), ...)` over the extended domain `x∈H'`.
+Remember that our constraints evaluate to `0` over the original domain, because they are satisfied for the computation trace. This is not the case for evaluations `C(T(x), T(gx), ...)` over the extended domain `x∈H'`.
 
 ## Quotient
 The quotient polynomial Q(x) is computed by dividing the composite constraint polynomial C(x) by the vanishing polynomial for the original domain (roots of unity). => `C(x) / Z(x) = Q(x)`. Note that this will only yield a low-degree Q(x) if the trace satisfies the constraints over the original domain, since C(x) was interpolated over the extended domain that includes the original domin.
