@@ -125,7 +125,7 @@ Assuming only one column (one trace polynomial T(x)) for the fibonacci example.
 4. Commit `Q(z)` for a random point `z` outside the domains.
 
 ### Verifier
-1. Check that `Q(x) = fibonacci(t2, t1, t0) / Z(x)`, for a few spot checks `x∈H'∌H`.
+1. Check that `Q(x) = fibonacci(T(ggx), T(gx), T(x)) / Z(x)`, for a few spot checks `x∈H'∌H`.
 2. Check that `Q(z) = C(z) / Z(z)` at a random spot check `z∌H'∌S`.
 2. Check that `D(x) = alpha * (Q(x) - Q(z)) / (x - z)` for a few spot checks `x∈S`.
 3. Check that `D(x)` is a low degree polynomial by spot-checking each folding layer at the same spot checks `x∈S`.
