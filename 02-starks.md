@@ -118,7 +118,7 @@ Assuming only one column (one trace polynomial T(x)) for the fibonacci example.
 ### Prover
 
 1. Interpolate `T(x)` over the original domain using the computation trace.
-2. Interpolate `C(x) = fibonacci(T(ggx), T(gx), T(x))` over the extended domain.
+2. Interpolate `C(x) = fibonacci(T(ggx), T(gx), T(x))` over the extended domain, note that `T(ggx), T(gx), T(x)` will be revealed by the prover who previously committed these LDE evaluations to a merkle tree.
 3. Commit to `Q(x) = C(x) / Z(x)` over the shifted domain.
 3. Fold `D(x)` over the shifted domain using FRI.
 4. Commit `Q(z)` for a random point `z` outside the domains.
@@ -134,6 +134,7 @@ Assuming only one column (one trace polynomial T(x)) for the fibonacci example.
 I am working on a toy implementation of STARK constructions [here](https://github.com/jonas089/toyni). This article is closely aligned with the code that I am writing in that repository, so please open an issue if you discover an inaccuracy or mistake in my current understanding of DEEP / FRI. Toyni is an active work in progress and will undergo major changes to closely align with this article.
 
 >[!WARNING]
-> In production starks we use randomness to blind the trace. 
-> For example, the values alpha and z are derived using fiat-shamir, after the prover committed to the
-> LDE of the Trace.
+> In production STARKs we use randomness to blind the trace. 
+> For example, the values alpha and z are derived using fiat-shamir, after the prover already committed to the
+> LDE of the Trace. This makes it difficult for the prover to forge a polynomial that satisfys the verifier checks
+> at just z and a few points in the extended domain.
