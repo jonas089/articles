@@ -131,4 +131,9 @@ Assuming only one column (one trace polynomial T(x)) for the fibonacci example.
 
 
 ## Toyni STARK
-I am working on a toy implementation of STARK constructions [here](https://github.com/jonas089/toyni). This article is closely aligned with the code that I am writing in that repository, so please open an issue if you discover an inaccuracy or mistake in my current understanding of DEEP / FRI.
+I am working on a toy implementation of STARK constructions [here](https://github.com/jonas089/toyni). This article is closely aligned with the code that I am writing in that repository, so please open an issue if you discover an inaccuracy or mistake in my current understanding of DEEP / FRI. Toyni is an active work in progress and will undergo major changes to closely align with this article.
+
+>[!WARNING]
+> In production starks we use randomness to blind the trace. 
+> For example, the values alpha and z are derived using fiat-shamir, after the prover committed to the
+> LDE of the Trace.
