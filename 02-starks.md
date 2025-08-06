@@ -45,7 +45,8 @@ encodes a constraint where the next row for a column must be the square of the p
 
 the constraints are satisfied for this colum that represents the computation trace of the x variable.
 
-We construct a composite constraint polynomial C(x) that is never interpolated. Instead we later use the function definition to evaluate constraints at random points (more about this in the DEEP section).
+We construct a composite constraint polynomial C(x) that must be interpolated over the extended domain, satisfying constraints over the original domain for a valid trace.
+Note that in our examples we don't need a composite constraint polynomial, since we only work with a single transition constraint C(x).
 
 `C(x) = ∑ c1(x) + c2(x) + ... + ci(x)`
 
