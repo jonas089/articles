@@ -52,15 +52,48 @@ Note that in our examples we don't need a composite constraint polynomial, since
 
 Note that in production systems we add random coefficients for extra security.
 
-## LDE - Low degree extension
-We use low degree extension (LDE) to evaluate our constraints at `T(x), x∈H'`, where H' is the extended domain that intersects our original domain / roots of unity H.
+## LDE
+We evalaute our constraints over the low-degree extension of our trace polynomial `T(x)`:
+```rust
+        let c_evals: Vec<Fr> = shifted_domain
+            .elements()
+            .map(|x| {
+                fibonacci_constraint(
+                    trace_poly.evaluate(g * g * x),
+                    trace_poly.evaluate(g * x),
+                    trace_poly.evaluate(x),
+                ) * boundary_constraint_1(x, g, trace_len)
+                    * boundary_constraint_2(x, g, trace_len)
+            })
+            .collect();
+```
 
-Remember that our constraints evaluate to `0` over the original domain, because they are satisfied for the computation trace. This is not the case for evaluations `C(T(x), T(gx), ...)` over the extended domain `x∈H'`.
+This is an example fibonacci program with constraints defined as:
+
+```rust
+        // the fibonacci constraint used for proving
+        fn fibonacci_constraint(t2: Fr, t1: Fr, t0: Fr) -> Fr {
+            // temporary solution - this is insecure and proper boundaries are better
+            t2 - (t1 + t0)
+        }
+
+        fn boundary_constraint_1(x: Fr, g: Fr, n: usize) -> Fr {
+            x - g.pow([(n - 1) as u64])
+        }
+
+        fn boundary_constraint_2(x: Fr, g: Fr, n: usize) -> Fr {
+            x - g.pow([(n - 2) as u64])
+        }
+```
+
+> [!NOTE]
+> We need the boundary constraints to ensure the cyclic structure holds over the original and shifted domain.
+> All constraints must be polynomials.
 
 ## Quotient
 The quotient polynomial Q(x) is computed by dividing the composite constraint polynomial C(x) by the vanishing polynomial for the original domain (roots of unity). => `C(x) / Z(x) = Q(x)`. Note that this will only yield a low-degree Q(x) if the trace satisfies the constraints over the original domain, since C(x) was interpolated over the extended domain that includes the original domin.
 
-Spot checks are however only performed in and outside of the extended domain `x∈H', x∌H, z∌S, z∌H'`. If we tried to spot-check inside the original domain `H`, then we would leak trace values which is not zero-knowledge.
+Spot checks are however only performed in and outside of the shifted domain `z∌S`. If we tried to spot-check inside the original domain `H`, then we would leak trace values which is not zero-knowledge.
 
 ## DEEP
 In STARK constructions we want to prove that we know a trace that satisfies our constraints over the original domain without revealing any of the original trace values.
@@ -71,8 +104,7 @@ To achieve this, we have to construct a DEEP polynomial from the trace and const
 
 Where `Z(x)` is the vanishing polynomial of the original domain and `Q(x)` is the quotient polynomial from `C(x) / Z(x)`. Note that in a real-world scenario we would add trace evaluations:
 
-
-`D(x) = alpha_i * ((Q(x) - Q(z)) / x - z) + alpha_j * ((T(x) - T(z) / x - z)`
+`D(x) = alpha * ((Q(x) - Q(z)) / x - z) + beta * ((T(x) - T(z) / x - z)`, ...
 
 We use FRI to check, in a point-wise manner, that the polynomial `Q(x)`, of degree `d`, when divided by a degree-1 polynomial (x - z), yields a low-degree polynomial that is within our degree bound, which depends on the trace size and the degree of our constraints.
 
