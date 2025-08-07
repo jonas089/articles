@@ -45,7 +45,7 @@ encodes a constraint where the next row for a column must be the square of the p
 
 the constraints are satisfied for this colum that represents the computation trace of the x variable.
 
-We construct a composite constraint polynomial C(x) that must be interpolated over the extended domain, satisfying constraints over the original domain for a valid trace.
+We construct a composite constraint polynomial C(x) that must be interpolated/ evaluated over the shifted domain, satisfying constraints over the original domain for a valid trace.
 Note that in our examples we don't need a composite constraint polynomial, since we only work with a single transition constraint C(x).
 
 `C(x) = ∑ c1(x) + c2(x) + ... + ci(x)`
@@ -121,14 +121,14 @@ Assuming only one column (one trace polynomial T(x)) for the fibonacci example.
 ### Prover
 
 1. Interpolate `T(x)` over the original domain using the computation trace.
-2. Interpolate `C(x) = fibonacci(T(ggx), T(gx), T(x))` over the extended domain, note that `T(ggx), T(gx), T(x)` will be revealed by the prover who previously committed these LDE evaluations to a merkle tree.
+2. Interpolate/Evaluate `C(x) = fibonacci(T(ggx), T(gx), T(x))` over the shifted domain.
 3. Commit to `Q(x) = C(x) / Z(x)` over the shifted domain.
 3. Fold `D(x)` over the shifted domain using FRI.
-4. Commit `Q(z)` for a random point `z` outside the domains.
+4. Commit `Q(z)` for a random point `z` outside all used domains.
 
 ### Verifier
 1. Check that `Q(x) = fibonacci(T(ggx), T(gx), T(x)) / Z(x)`, for a few spot checks `x∈H'∌H`.
-2. Check that `Q(z) = C(z) / Z(z)` at a random spot check `z∌H'∌S`.
+2. Check that `Q(z) = fibonacci(T(ggx), T(gx), T(x)) / Z(z)` at a random spot check `z∌H'∌S`.
 2. Check that `D(x) = alpha * (Q(x) - Q(z)) / (x - z)` for a few spot checks `x∈S`.
 3. Check that `D(x)` is a low degree polynomial by spot-checking each folding layer at the same spot checks `x∈S`.
 
