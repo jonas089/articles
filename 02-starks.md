@@ -1,7 +1,7 @@
 # STARKs, DEEP and FRI
 This document describes some essential aspects of zk-STARK constructions, with a strong focus on DEEP and FRI. Fiat-Shamir, blinding and some details are not covered in as much depth. This document is based on my understanding and there may be mistakes in it. 
 
-We will be working with just a single column / variable and therefore just a single trace polynomial `T(x)` and just one transition constraint `C(x)` (no boundary constraints).
+We will be working with just a single column / variable and therefore just a single trace polynomial `T(x)` and just one transition constraint `C(x)` and two supplementary boundary constraints.
 
 ## Trace Polynomials
 A computation trace is the state of each variable used in that computation at each step. We can represent a trace as a table with rows and columns, where each row represents a point in time and each column represents a variable. In STARK constructions, we interpolate each column / each variable as a polynomial, where the domain is a set of `n` roots of unity.
